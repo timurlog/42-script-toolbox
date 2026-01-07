@@ -27,7 +27,7 @@ ask_c_cpp() {
 		read -p "$prompt (c/cpp) " answer || { echo -e "${RED}Failed to read input.${RESET}"; return 2; }
 		case "$answer" in
 			c|C) return 0 ;;
-			cpp|CPP) return 1 ;;
+			cpp|CPP|c++|C++) return 1 ;;
 			*) echo -e "${YELLOW}Invalid input. Please enter 'c' or 'cpp'.${RESET}" ;;
 		esac
 	done
@@ -45,12 +45,12 @@ if [[ ! -f "$SCRIPT_DIR/cppMakefile.sh" ]]; then
 fi
 
 # Main script execution starts here
-if ask_yes_no "Do you need C or C++ Makefile"; then
-	if ask_c_cpp "Which one do you need?"; then
+if ask_yes_no "Do you need a Makefile"; then
+	if ask_c_cpp "C or C++?"; then
 		bash "$SCRIPT_DIR/cMakefile.sh" || { echo -e "${RED}Failed to create C Makefile.${RESET}"; exit 1; }
 	else
 		bash "$SCRIPT_DIR/cppMakefile.sh" || { echo -e "${RED}Failed to create C++ Makefile.${RESET}"; exit 1; }
 	fi
 else
-	echo -e "${BLUE}Does not require a C or C++ Makefile.${RESET}"
+	echo -e "${BLUE}Does not require a Makefile.${RESET}"
 fi

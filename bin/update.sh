@@ -25,7 +25,7 @@ cd "$INSTALL_DIR" || { echo -e "${RED}Unable to access the installation director
 if [ -d ".git" ]; then
 	echo -e "${YELLOW}Pulling latest changes from the repository...${RESET}"
 	git fetch origin > /dev/null 2>&1 || { echo -e "${RED}Failed to fetch from the repository.${RESET}"; exit 1; }
-	git reset --hard origin > /dev/null 2>&1 || { echo -e "${RED}Failed to reset the repository.${RESET}"; exit 1; }
+	git reset --hard origin/main > /dev/null 2>&1 || { echo -e "${RED}Failed to reset the repository.${RESET}"; exit 1; }
 	git submodule update --init > /dev/null 2>&1 || { echo -e "${RED}Failed to update submodules.${RESET}"; exit 1; }
 	echo -e "${YELLOW}Repository updated successfully.${RESET}"
 else
