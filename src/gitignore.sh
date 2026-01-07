@@ -9,9 +9,15 @@ MAGENTA="\033[0;95m"
 RESET="\033[0m"
 
 # Define project name
-project_name=$(basename "$(pwd)")
+project_name=$(basename "$(pwd)") || { echo -e "${RED}Failed to get project name.${RESET}"; exit 1; }
 
-touch .gitignore
+# Check if project name is empty
+if [[ -z "$project_name" ]]; then
+    echo -e "${RED}Project name is empty.${RESET}"
+    exit 1
+fi
+
+touch .gitignore || { echo -e "${RED}Failed to create .gitignore file.${RESET}"; exit 1; }
 
 cat <<GIT_EOF > .gitignore
 # ============================================
