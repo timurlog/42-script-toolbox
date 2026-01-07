@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Define color codes for output messages
+YELLOW="\033[1;33m"
+RED="\033[0;91m"
+GREEN="\033[1;32m"
+BLUE="\033[0;94m"
+MAGENTA="\033[0;95m"
+RESET="\033[0m"
+
+# Define variables for repository URL, temporary directory, installation directory, and shell configuration file
+REPO_URL="https://github.com/timurlog/best_script.git"
+TEMP_DIR="$HOME/temp_____"
+INSTALL_DIR="$HOME/.script"
+HOME_DIR="$HOME"
+RC_FILE="$HOME/.zshrc"
+
+# Display a welcome message
+echo -e "${BLUE}Welcome to the Best Script updater.${RESET}"
+
+# Navigate to the home directory
+cd "$INSTALL_DIR" || { echo -e "${RED}Unable to access the installation directory.${RESET}"; exit 1; }
+
+# Pull the latest changes from the repository
+if [ -d ".git" ]; then
+	echo -e "${YELLOW}Pulling latest changes from the repository...${RESET}"
+	git fetch origin > /dev/null 2>&1 || { echo -e "${RED}Failed to fetch from the repository.${RESET}"; exit 1; }
+	git reset --hard origin > /dev/null 2>&1 || { echo -e "${RED}Failed to reset the repository.${RESET}"; exit 1; }
+	git submodule update --init > /dev/null 2>&1 || { echo -e "${RED}Failed to update submodules.${RESET}"; exit 1; }
+	echo -e "${YELLOW}Repository updated successfully.${RESET}"
+else
+	echo -e "${RED}Error: This is not a git repository.${RESET}"
+	exit 1
+fi
+
+# Return to the home directory and clean up the temporary directory
+cd "$HOME" || { echo -e "${RED}Unable to return to the home directory.${RESET}"; exit 1; }
+
+# Display a success message
+echo -e "${GREEN}Best Script update completed successfully.${RESET}"
