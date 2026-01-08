@@ -109,6 +109,26 @@ Execute this Command
    bash -c "$(curl -fsSL https://raw.github.com/timurlog/42-script-toolbox/main/bin/install.sh)"
    ```
 
+During installation, the script will prompt you for:
+
+- Your 42 intra username
+- Your 42 email address
+- The link to your libft repository (GitHub, GitLab, etc.)
+
+Your libft repository must be structured as follows:
+
+```
+.
+├── include
+│   └── libft.h
+└── libft
+    ├── Makefile
+    └── *.c
+    └── ...
+```
+
+> **Example:** You can use [my libft repository](https://github.com/timurlog/Libft) as a reference.
+
 ### Update
 
 Execute this Command
