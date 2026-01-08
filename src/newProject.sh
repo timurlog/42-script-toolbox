@@ -60,7 +60,7 @@ while [[ -z "${GIT_REPO// }" ]]; do
 done
 
 echo -e "${YELLOW}Cloning Repository...${RESET}"
-git clone "$GIT_REPO" "$PWD_DIR/$PROJECT_NAME" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
+git clone --recursive "$GIT_REPO" "$PWD_DIR/$PROJECT_NAME" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
 echo -e "${GREEN}Project '$PROJECT_NAME' created successfully.${RESET}"
 
 cd "$PWD_DIR/$PROJECT_NAME" || { echo -e "${RED}Failed to change directory to the new project.${RESET}"; exit 1; }

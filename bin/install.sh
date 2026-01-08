@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Define color codes for output messages
 YELLOW="\033[1;33m"
 RED="\033[0;91m"
@@ -10,7 +12,6 @@ RESET="\033[0m"
 
 # Define variables for repository URL, temporary directory, installation directory, and shell configuration file
 REPO_URL="https://github.com/timurlog/best_script.git"
-TEMP_DIR="$HOME/temp_____"
 INSTALL_DIR="$HOME/.script"
 HOME_DIR="$HOME"
 PWD_DIR="$(pwd)"
@@ -22,17 +23,16 @@ echo -e "${BLUE}Welcome to the Best Script installer.${RESET}"
 # Navigate to the home directory
 cd "$HOME" || { echo -e "${RED}Unable to return to the home directory.${RESET}"; exit 1; }
 
-# Prepare for installation by cleaning up and creating a temporary directory
+# Prepare for installation by creating a temporary directory
 echo -e "${YELLOW}Preparing the installation...${RESET}"
-rm -rf "$TEMP_DIR"
-mkdir -p "$TEMP_DIR" || { echo -e "${RED}Failed to create the temporary directory.${RESET}"; exit 1; }
+TEMP_DIR="$(mktemp -d)" || { echo -e "${RED}Failed to create the temporary directory.${RESET}"; exit 1; }
 
 # Ensure the temporary directory is removed on script exit
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # Clone the repository into the temporary directory
 echo -e "${YELLOW}Cloning the repository...${RESET}"
-git clone "$REPO_URL" "$TEMP_DIR/.script" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
+git clone --recursive "$REPO_URL" "$TEMP_DIR/.script" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
 
 # Copy the cloned files to the installation directory
 echo -e "${YELLOW}Copying files...${RESET}"

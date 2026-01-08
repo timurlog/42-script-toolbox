@@ -12,7 +12,6 @@ RESET="\033[0m"
 
 # Define variables
 REPO_URL="${LIBFT_REPO_URL:-}"
-TEMP_DIR="$HOME/temp_____"
 PROJECT_DIR="$(pwd)"
 INSTALL_DIR="$PROJECT_DIR"
 
@@ -36,17 +35,16 @@ ask_yes_no() {
 	done
 }
 
+# Prepare for installation by creating a temporary directory
+echo -e "${YELLOW}Preparing the libft installation...${RESET}"
+TEMP_DIR="$(mktemp -d)" || { echo -e "${RED}Failed to create the temporary directory.${RESET}"; exit 1; }
+
 # Ensure the temporary directory is removed on script exit
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-# Prepare for installation by cleaning up and creating a temporary directory
-echo -e "${YELLOW}Preparing the libft installation...${RESET}"
-rm -rf "$TEMP_DIR"
-mkdir -p "$TEMP_DIR" || { echo -e "${RED}Failed to create the temporary directory.${RESET}"; exit 1; }
-
 # Clone the repository into the temporary directory
 echo -e "${YELLOW}Cloning the libft repository...${RESET}"
-git clone "$REPO_URL" "$TEMP_DIR/libft" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
+git clone --recursive "$REPO_URL" "$TEMP_DIR/libft" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
 
 # Copy the cloned files to the installation directory
 echo -e "${YELLOW}Copying files...${RESET}"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Define color codes for output messages
 YELLOW="\033[1;33m"
 RED="\033[0;91m"
@@ -22,7 +24,7 @@ echo -e "${BLUE}Welcome to the Best Script updater.${RESET}"
 cd "$INSTALL_DIR" || { echo -e "${RED}Unable to access the installation directory.${RESET}"; exit 1; }
 
 # Pull the latest changes from the repository
-if [ -d ".git" ]; then
+if [[ -d ".git" ]]; then
 	echo -e "${YELLOW}Pulling latest changes from the repository...${RESET}"
 	git fetch origin > /dev/null 2>&1 || { echo -e "${RED}Failed to fetch from the repository.${RESET}"; exit 1; }
 	git reset --hard origin/main > /dev/null 2>&1 || { echo -e "${RED}Failed to reset the repository.${RESET}"; exit 1; }

@@ -12,7 +12,6 @@ RESET="\033[0m"
 
 # Variables
 REPO_URL="${LIBFT_REPO_URL:-}"
-TEMP_ROOT="$HOME/temp_____"
 PROJECT_DIR="$(pwd)"
 
 # Check if REPO_URL is set
@@ -27,13 +26,12 @@ if [[ ! -f "$PROJECT_DIR/include/libft.h" || ! -d "$PROJECT_DIR/libft" ]]; then
 	exit 1
 fi
 
-trap 'rm -rf "$TEMP_ROOT"' EXIT
+CLONE_DIR="$(mktemp -d)" || { echo -e "${RED}Failed to create the temporary clone directory.${RESET}"; exit 1; }
 
-mkdir -p "$TEMP_ROOT" || { echo -e "${RED}Failed to create the temporary root directory.${RESET}"; exit 1; }
-CLONE_DIR="$(mktemp -d "${TEMP_ROOT%/}/libft-clone-XXXXXX")" || { echo -e "${RED}Failed to create the temporary clone directory.${RESET}"; exit 1; }
+trap 'rm -rf "$CLONE_DIR"' EXIT
 
 echo -e "${YELLOW}Cloning the libft repository...${RESET}"
-git clone "$REPO_URL" "$CLONE_DIR" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
+git clone --recursive "$REPO_URL" "$CLONE_DIR" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
 
 echo -e "${BLUE}Copying local sources to the clone...${RESET}"
 mkdir -p "$CLONE_DIR/include" || { echo -e "${RED}Failed to create include directory in clone.${RESET}"; exit 1; }
