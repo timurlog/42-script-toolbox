@@ -309,3 +309,5 @@ Desktop.ini
 *.bak
 *.backup
 GIT_EOF
+
+echo -e "${GREEN}.gitignore file created successfully.${RESET}"

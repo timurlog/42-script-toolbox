@@ -50,8 +50,10 @@ fi
 if ask_yes_no "Do you need a Makefile"; then
 	if ask_c_cpp "C or C++?"; then
 		bash "$SCRIPT_DIR/cMakefile.sh" || { echo -e "${RED}Failed to create C Makefile.${RESET}"; exit 1; }
+		echo -e "${GREEN}C Makefile created successfully.${RESET}"
 	else
 		bash "$SCRIPT_DIR/cppMakefile.sh" || { echo -e "${RED}Failed to create C++ Makefile.${RESET}"; exit 1; }
+		echo -e "${GREEN}C++ Makefile created successfully.${RESET}"
 	fi
 else
 	echo -e "${BLUE}Does not require a Makefile.${RESET}"
