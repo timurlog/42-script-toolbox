@@ -78,4 +78,8 @@ if ask_yes_no "Do you want to initialize a libft in this project?"; then
 	bash "$SCRIPT_DIR/libft.sh" || { echo -e "${RED}Failed to initialize libft.${RESET}"; exit 1; }
 fi
 
+echo -e "${YELLOW}Committing initial project setup...${RESET}"
+git add . || { echo -e "${RED}Failed to stage files for commit.${RESET}"; exit 1; }
+git commit -m "Initial project setup" > /dev/null 2>&1 || { echo -e "${RED}Failed to commit initial setup.${RESET}"; exit 1; }
+
 echo -e "${GREEN}New project setup completed successfully.${RESET}"
