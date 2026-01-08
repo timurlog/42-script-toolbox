@@ -18,7 +18,7 @@ PWD_DIR="$(pwd)"
 RC_FILE="$HOME/.zshrc"
 
 # Display a welcome message
-echo -e "${BLUE}Welcome to the Best Script installer.${RESET}"
+echo -e "${BLUE}Welcome to the 42 Script Toolbox installer.${RESET}"
 
 # Navigate to the home directory
 cd "$HOME" || { echo -e "${RED}Unable to return to the home directory.${RESET}"; exit 1; }
@@ -94,7 +94,7 @@ fi
 cd "$PWD_DIR" || { echo -e "${RED}Unable to return to the old directory.${RESET}"; exit 1; }
 
 # Display a success message
-echo -e "${GREEN}Best Script installation completed successfully.${RESET}"
+echo -e "${GREEN}42 Script Toolbox installation completed successfully.${RESET}"
 
 # Restart the shell to apply changes
 exec "$SHELL"

@@ -32,14 +32,17 @@
     <img src="assets/sh_logo.png" alt="Logo" width="120" height="120">
   </a>
 
-<h3 align="center">Best Script</h3>
+<h3 align="center">42 Script Toolbox</h3>
 
   <p align="center">
-	A collection of my best scripts for coding at 42 Campus
+	A collection of shell scripts to automate project setup and configuration tasks for 42 Campus students.
 	<br />
 	<a href="https://github.com/timurlog/42-script-toolbox"><strong>Explore the docs »</strong></a>
 	<br />
 	<br />
+    <a href="https://github.com/timurlog/42-script-toolbox/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    &middot;
+    <a href="https://github.com/timurlog/42-script-toolbox/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -61,7 +64,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
+    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -73,7 +76,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<!-- [![Product Name Screen Shot][product-screenshot]]() -->
+[![Product Name Screen Shot][product-screenshot]]()
 
 This project is a collection of utility scripts designed to streamline the workflow at 42 Campus.
 
@@ -96,14 +99,14 @@ The goal is to save time on repetitive setup tasks so you can focus on coding.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Here are the steps to follow to install Best Script on your 42 Linux/macOS machine.
+Here are the steps to follow to install 42 Script Toolbox on your 42 Linux machine.
 
-### Linux/macOS Installation
+### Linux Installation
 
 Execute this Command
 
    ```sh
-   bash -c "$(curl -fsSL https://raw.github.com/timurlog/best_script/main/bin/install.sh)"
+   bash -c "$(curl -fsSL https://raw.github.com/timurlog/42-script-toolbox/main/bin/install.sh)"
    ```
 
 ### Update
@@ -111,7 +114,7 @@ Execute this Command
 Execute this Command
 
    ```sh
-   bash -c "$(curl -fsSL https://raw.github.com/timurlog/best_script/main/bin/update.sh)"
+   bash -c "$(curl -fsSL https://raw.github.com/timurlog/42-script-toolbox/main/bin/update.sh)"
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -126,18 +129,15 @@ Execute this Command
    cmd
    ```
 
-### Options Available in my Best Script Command
+### Cmd Available in my 42 Script Toolbox Command
 
-| Options                    | Description                                                            |
-|----------------------------|------------------------------------------------------------------------|
-| `np`                       | Strat a new project.                                                   |
-<!-- | `--version`                | Displays the version of the tree.                                      | -->
-<!-- | `--update`                 | Updates the tree command.                                              | -->
-<!-- | `directory name`           | Displays the directory tree hierarchy.                                 | -->
-<!-- | `-d`                       | Lists only directories.                                                | -->
-<!-- | `-s`                       | Print the size of each file along with the name.                       | -->
-<!-- | `-t`                       | Sorts the output by last modification time rather than alphabetically. | -->
-<!-- | `-r`                       | Sort the output in reverse alphabetic order.                           | -->
+| Cmd        | Description                                                               |
+|------------|---------------------------------------------------------------------------|
+| `npro`     | Create a new project from templates and initialize basic files.           |
+| `alibft`   | Add your libft library to the current project.                            |
+| `acomp`    | Generate the project's Makefile and compilation settings.                 |
+| `agit`     | Add a standard .gitignore to the current project.                         |
+| `ulibft`   | Update your libft repo with the libft version located in the current dir. |
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -162,12 +162,10 @@ Don't forget to give the project a star! Thanks again!
 ### Top contributors:
 
 <a href="https://github.com/timurlog/42-script-toolbox/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=timurlog/best_script" alt="contrib.rocks image" />
+  <img src="https://contrib.rocks/image?repo=timurlog/42-script-toolbox" alt="contrib.rocks image" />
 </a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- LICENSE -->
 ## License
@@ -177,16 +175,14 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 <!-- CONTACT -->
 ## Contact
 
-Timur Logie - [42 Profile](https://profile.intra.42.fr/users/tilogie) - tilogie@student.42belgium.be
+Timur Logie - [42 Profile](https://profile.intra.42.fr/users/tilogie) - tilogie@student.42belgium.be - timur.logie@gmail.com
 
 Project Link: [https://github.com/timurlog/42-script-toolbox](https://github.com/timurlog/42-script-toolbox)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- ACKNOWLEDGMENTS -->
@@ -201,19 +197,19 @@ Project Link: [https://github.com/timurlog/42-script-toolbox](https://github.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/timurlog/best_script.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/timurlog/42-script-toolbox.svg?style=for-the-badge
 [contributors-url]: https://github.com/timurlog/42-script-toolbox/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/timurlog/best_script.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/timurlog/42-script-toolbox.svg?style=for-the-badge
 [forks-url]: https://github.com/timurlog/42-script-toolbox/network/members
-[stars-shield]: https://img.shields.io/github/stars/timurlog/best_script.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/timurlog/42-script-toolbox.svg?style=for-the-badge
 [stars-url]: https://github.com/timurlog/42-script-toolbox/stargazers
-[issues-shield]: https://img.shields.io/github/issues/timurlog/best_script.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/timurlog/42-script-toolbox.svg?style=for-the-badge
 [issues-url]: https://github.com/timurlog/42-script-toolbox/issues
 [license-shield]: https://img.shields.io/badge/License-MIT-green?style=for-the-badge
 [license-url]: https://github.com/timurlog/42-script-toolbox/blob/main/LICENSE.txt
 [42]: https://img.shields.io/badge/-Profile-black.svg?style=for-the-badge&logo=42&colorB=555
 [42-url]: https://profile.intra.42.fr/users/tilogie
-[product-screenshot]: assets/screenshot.png
+[product-screenshot]: assets/image.png
 [C]: https://img.shields.io/badge/C-blue?style=for-the-badge&logo=c&logoColor=white
 [C-url]: https://www.c-language.org/ 
 [Makefile]: https://img.shields.io/badge/Makefile-0779c1?style=for-the-badge&logo=gnubash&logoColor=white

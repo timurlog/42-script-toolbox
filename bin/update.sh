@@ -18,7 +18,7 @@ HOME_DIR="$HOME"
 RC_FILE="$HOME/.zshrc"
 
 # Display a welcome message
-echo -e "${BLUE}Welcome to the Best Script updater.${RESET}"
+echo -e "${BLUE}Welcome to the 42 Script Toolbox updater.${RESET}"
 
 # Navigate to the home directory
 cd "$INSTALL_DIR" || { echo -e "${RED}Unable to access the installation directory.${RESET}"; exit 1; }
@@ -39,4 +39,4 @@ fi
 cd "$HOME" || { echo -e "${RED}Unable to return to the home directory.${RESET}"; exit 1; }
 
 # Display a success message
-echo -e "${GREEN}Best Script update completed successfully.${RESET}"
+echo -e "${GREEN}42 Script Toolbox update completed successfully.${RESET}"
