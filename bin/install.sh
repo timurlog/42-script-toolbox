@@ -42,19 +42,19 @@ cp -r "$TEMP_DIR/.script" "$HOME_DIR" || { echo -e "${RED}Failed to copy files.$
 # # Add an alias to the shell configuration file if it doesn't already exist
 echo -e "${YELLOW}Adding alias and export in ${MAGENTA}$RC_FILE${YELLOW}...${RESET}"
 if ! grep -q "alias npro=" "$RC_FILE"; then
-	printf "\nalias npro=%s/.script/src/newProject.sh" "$HOME_DIR" >> "$RC_FILE"
+	printf "\nalias npro='bash %s/.script/src/newProject.sh'" "$HOME_DIR" >> "$RC_FILE"
 fi
 if ! grep -q "alias alibft=" "$RC_FILE"; then
-	printf "\nalias alibft=%s/.script/src/libft.sh" "$HOME_DIR" >> "$RC_FILE"
+	printf "\nalias alibft='bash %s/.script/src/libft.sh'" "$HOME_DIR" >> "$RC_FILE"
 fi
 if ! grep -q "alias acomp=" "$RC_FILE"; then
-	printf "\nalias acomp=%s/.script/src/compiler.sh" "$HOME_DIR" >> "$RC_FILE"
+	printf "\nalias acomp='bash %s/.script/src/compiler.sh'" "$HOME_DIR" >> "$RC_FILE"
 fi
 if ! grep -q "alias agit=" "$RC_FILE"; then
-	printf "\nalias agit=%s/.script/src/gitignore.sh" "$HOME_DIR" >> "$RC_FILE"
+	printf "\nalias agit='bash %s/.script/src/gitignore.sh'" "$HOME_DIR" >> "$RC_FILE"
 fi
 if ! grep -q "alias ulibft=" "$RC_FILE"; then
-	printf "\nalias ulibft=%s/.script/src/updateLibft.sh" "$HOME_DIR" >> "$RC_FILE"
+	printf "\nalias ulibft='bash %s/.script/src/updateLibft.sh'" "$HOME_DIR" >> "$RC_FILE"
 fi
 read -rp "42 Username: " USER || { echo -e "${RED}Failed to read input.${RESET}"; exit 1; }
 while [[ -z "${USER// }" ]]; do
