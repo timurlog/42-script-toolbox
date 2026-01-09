@@ -16,7 +16,7 @@ set -euo pipefail
 readonly REPO_URL="https://github.com/timurlog/42-script-toolbox.git"
 readonly INSTALL_DIR="$HOME/.script"
 readonly RC_FILE="$HOME/.zshrc"
-readonly SCRIPT_VERSION="1.0.0"
+readonly SCRIPT_VERSION="1.1.0"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # COLORS & SYMBOLS
