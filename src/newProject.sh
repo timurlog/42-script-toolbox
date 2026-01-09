@@ -1,91 +1,209 @@
 #!/bin/bash
+#
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                           42 NEW PROJECT CREATOR                             ║
+# ║                                                                              ║
+# ║  Quickly scaffold a new 42 project with all essentials                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 set -euo pipefail
 
-# Define color codes for output messages
-YELLOW="\033[1;33m"
-RED="\033[0;91m"
-GREEN="\033[1;32m"
-BLUE="\033[0;94m"
-MAGENTA="\033[0;95m"
-RESET="\033[0m"
-
-# Functions to ask yes/no questions
-ask_yes_no() {
-	local prompt="$1"
-	while true; do
-		read -p "$prompt (y/n) " answer || { echo -e "${RED}Failed to read input.${RESET}"; return 2; }
-		case "$answer" in
-			y|Y) return 0 ;;
-			n|N) return 1 ;;
-			*) echo -e "${YELLOW}Invalid input. Please enter 'y' or 'n'.${RESET}" ;;
-		esac
-	done
-}
+# ─────────────────────────────────────────────────────────────────────────────────
+# CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────────
 
 SCRIPT_DIR="$HOME/.script/src"
-if [[ ! -f "$SCRIPT_DIR/libft.sh" ]]; then
-	echo -e "${RED}Error: libft.sh not found in $SCRIPT_DIR${RESET}"
-	exit 1
-fi
-if [[ ! -f "$SCRIPT_DIR/compiler.sh" ]]; then
-	echo -e "${RED}Error: compiler.sh not found in $SCRIPT_DIR${RESET}"
-	exit 1
-fi
-if [[ ! -f "$SCRIPT_DIR/gitignore.sh" ]]; then
-	echo -e "${RED}Error: gitignore.sh not found in $SCRIPT_DIR${RESET}"
-	exit 1
-fi
+WORKING_DIR="$(pwd)"
 
-# Define variables
-PWD_DIR="$(pwd)"
+# ─────────────────────────────────────────────────────────────────────────────────
+# SETUP
+# ─────────────────────────────────────────────────────────────────────────────────
 
-echo -e "${YELLOW}Creating new Project...${RESET}"
-
-read -p "Project name: " PROJECT_NAME || { echo -e "${RED}Failed to read input.${RESET}"; exit 1; }
-while [[ -z "${PROJECT_NAME// }" ]]; do
-	echo -e "${YELLOW}The project name cannot be empty.${RESET}"
-	read -p "Project name: " PROJECT_NAME || { echo -e "${RED}Failed to read input.${RESET}"; exit 1; }
-done
-
-if [[ -d "$PWD_DIR/$PROJECT_NAME" ]]; then
-	echo -e "${RED}Directory '$PROJECT_NAME' already exists in $(pwd).${RESET}"
-	exit 1
-fi
-
-if ask_yes_no "Do you want to clone a repository ?"; then
-	read -p "Git repository: " GIT_REPO || { echo -e "${RED}Failed to read input.${RESET}"; exit 1; }
-	while [[ -z "${GIT_REPO// }" ]]; do
-		echo -e "${YELLOW}The Git repository cannot be empty.${RESET}"
-		read -p "Git repository: " GIT_REPO || { echo -e "${RED}Failed to read input.${RESET}"; exit 1; }
-	done
-
-	echo -e "${YELLOW}Cloning Repository...${RESET}"
-	git clone --recursive "$GIT_REPO" "$PWD_DIR/$PROJECT_NAME" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
-	echo -e "${GREEN}Project '$PROJECT_NAME' created successfully.${RESET}"
+# Source common library
+if [[ -f "$SCRIPT_DIR/common.sh" ]]; then
+    source "$SCRIPT_DIR/common.sh"
 else
-	echo -e "${YELLOW}Initializing Repository...${RESET}"
-	git init "$PWD_DIR/$PROJECT_NAME" > /dev/null 2>&1 || { echo -e "${RED}Failed to initialize git repository.${RESET}"; exit 1; }
-	echo -e "${GREEN}Project '$PROJECT_NAME' created successfully.${RESET}"
+    echo "Error: common.sh not found in $SCRIPT_DIR" >&2
+    exit 1
 fi
 
-cd "$PWD_DIR/$PROJECT_NAME" || { echo -e "${RED}Failed to change directory to the new project.${RESET}"; exit 1; }
+# ─────────────────────────────────────────────────────────────────────────────────
+# BANNER
+# ─────────────────────────────────────────────────────────────────────────────────
 
-bash "$SCRIPT_DIR/gitignore.sh" || { echo -e "${RED}Failed to create .gitignore.${RESET}"; exit 1; }
+show_banner() {
+    echo -e "\n${C_CYAN}${C_BOLD}"
+    cat << 'EOF'
+    ╔═╗┌─┐┬ ┬  ╔═╗┬─┐┌─┐ ┬┌─┐┌─┐┌┬┐
+    ║╣ ├┤ │││  ╠═╝├┬┘│ │ │├┤ │   │ 
+    ╝  └─┘└┴┘  ╩  ┴└─└─┘└┘└─┘└─┘ ┴ 
+EOF
+    echo -e "${C_RESET}"
+    divider
+}
 
-bash "$SCRIPT_DIR/compiler.sh" || { echo -e "${RED}Failed to set up compiler.${RESET}"; exit 1; }
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDATION
+# ─────────────────────────────────────────────────────────────────────────────────
 
-if ask_yes_no "Do you want to create a src folder structure?"; then
-	mkdir -p src
-	echo -e "${GREEN}src folder created.${RESET}"
-fi
+check_dependencies() {
+    log_step "Checking dependencies..."
+    
+    local required=("libft.sh" "compiler.sh" "gitignore.sh" "common.sh")
+    local missing=()
+    
+    for script in "${required[@]}"; do
+        if [[ ! -f "$SCRIPT_DIR/$script" ]]; then
+            missing+=("$script")
+        fi
+    done
+    
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Missing required scripts:"
+        for m in "${missing[@]}"; do
+            log_dim "${S_CROSS} $m"
+        done
+        log_info "Please run the installer or updater first."
+        exit 1
+    fi
+    
+    log_success "All dependencies found"
+}
 
-if ask_yes_no "Do you want to initialize a libft in this project?"; then
-	bash "$SCRIPT_DIR/libft.sh" || { echo -e "${RED}Failed to initialize libft.${RESET}"; exit 1; }
-fi
+# ─────────────────────────────────────────────────────────────────────────────────
+# PROJECT CREATION
+# ─────────────────────────────────────────────────────────────────────────────────
 
-echo -e "${YELLOW}Committing initial project setup...${RESET}"
-git add . || { echo -e "${RED}Failed to stage files for commit.${RESET}"; exit 1; }
-git commit -m "Initial project setup" > /dev/null 2>&1 || { echo -e "${RED}Failed to commit initial setup.${RESET}"; exit 1; }
+get_project_info() {
+    log_step "Project Information"
+    
+    read_input "Project name" PROJECT_NAME "$S_FOLDER"
+    
+    # Check if directory exists
+    if [[ -d "$WORKING_DIR/$PROJECT_NAME" ]]; then
+        log_error "Directory '${C_CYAN}${PROJECT_NAME}${C_RED}' already exists!"
+        exit 1
+    fi
+    
+    PROJECT_PATH="$WORKING_DIR/$PROJECT_NAME"
+    log_dim "Location: $PROJECT_PATH"
+}
 
-echo -e "${GREEN}New project setup completed successfully.${RESET}"
+init_repository() {
+    log_step "Repository Setup"
+    
+    if ask_yes_no "Clone from existing repository?" "n"; then
+        local repo_url
+        read_input "Repository URL" repo_url "$S_LINK"
+        
+        log_info "Cloning repository..."
+        git clone --recursive "$repo_url" "$PROJECT_PATH" > /dev/null 2>&1 &
+        local pid=$!
+        spinner $pid "Downloading..."
+        wait $pid || { log_error "Failed to clone repository"; exit 1; }
+        
+        log_success "Repository cloned"
+    else
+        log_info "Initializing new repository..."
+        git init "$PROJECT_PATH" > /dev/null 2>&1 || { log_error "Failed to initialize repository"; exit 1; }
+        log_success "Repository initialized"
+    fi
+    
+    cd "$PROJECT_PATH" || { log_error "Cannot access project directory"; exit 1; }
+}
+
+setup_project_structure() {
+    log_step "Project Structure"
+    
+    # Gitignore
+    log_info "Creating .gitignore..."
+    bash "$SCRIPT_DIR/gitignore.sh" > /dev/null 2>&1 || { log_error "Failed to create .gitignore"; exit 1; }
+    
+    # Compiler/Makefile
+    log_info "Setting up build system..."
+    bash "$SCRIPT_DIR/compiler.sh" || { log_error "Failed to setup compiler"; exit 1; }
+    
+    # Source folder
+    if ask_yes_no "Create src/ folder?" "y"; then
+        mkdir -p src
+        log_success "Created ${C_CYAN}src/${C_RESET}"
+    fi
+    
+    # Include folder
+    if ask_yes_no "Create include/ folder?" "y"; then
+        mkdir -p include
+        log_success "Created ${C_CYAN}include/${C_RESET}"
+    fi
+}
+
+setup_libft() {
+    log_step "Library Setup"
+    
+    if ask_yes_no "Initialize libft in this project?" "y"; then
+        bash "$SCRIPT_DIR/libft.sh" || { log_error "Failed to initialize libft"; exit 1; }
+    else
+        log_dim "Skipping libft"
+    fi
+}
+
+initial_commit() {
+    log_step "Initial Commit"
+    
+    git add . > /dev/null 2>&1 || { log_error "Failed to stage files"; exit 1; }
+    git commit -m "🎉 Initial project setup" > /dev/null 2>&1 || { log_error "Failed to commit"; exit 1; }
+    
+    local commit_hash
+    commit_hash=$(git rev-parse --short HEAD)
+    log_success "Committed: ${C_CYAN}${commit_hash}${C_RESET} - Initial project setup"
+}
+
+show_summary() {
+    echo ""
+    divider
+    echo ""
+    echo -e "  ${C_GREEN}${C_BOLD}${S_ROCKET} Project Created Successfully!${C_RESET}"
+    echo ""
+    echo -e "  ${C_WHITE}Project:${C_RESET}  ${C_CYAN}${PROJECT_NAME}${C_RESET}"
+    echo -e "  ${C_WHITE}Location:${C_RESET} ${C_DIM}${PROJECT_PATH}${C_RESET}"
+    echo ""
+    
+    # Show structure
+    echo -e "  ${C_WHITE}Structure:${C_RESET}"
+    local items
+    items=$(ls -1A 2>/dev/null | head -10)
+    while IFS= read -r item; do
+        if [[ -d "$item" ]]; then
+            echo -e "    ${C_CYAN}${S_FOLDER}${C_RESET} ${item}/"
+        else
+            echo -e "    ${C_DIM}${S_DOT}${C_RESET} ${item}"
+        fi
+    done <<< "$items"
+    
+    echo ""
+    echo -e "  ${C_YELLOW}${S_STAR}${C_RESET} ${C_WHITE}Next steps:${C_RESET}"
+    echo -e "    ${C_DIM}cd ${PROJECT_NAME}${C_RESET}"
+    echo -e "    ${C_DIM}# Start coding!${C_RESET}"
+    echo ""
+    divider
+    echo ""
+}
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+main() {
+    clear
+    show_banner
+    
+    check_dependencies
+    get_project_info
+    init_repository
+    setup_project_structure
+    setup_libft
+    initial_commit
+    
+    show_summary
+}
+
+main "$@"

@@ -1,60 +1,87 @@
 #!/bin/bash
+#
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                           42 COMPILER SETUP                                  ║
+# ║                                                                              ║
+# ║  Interactive Makefile generator for C/C++ projects                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 set -euo pipefail
 
-# Define color codes for output messages
-YELLOW="\033[1;33m"
-RED="\033[0;91m"
-GREEN="\033[1;32m"
-BLUE="\033[0;94m"
-MAGENTA="\033[0;95m"
-RESET="\033[0m"
+# ─────────────────────────────────────────────────────────────────────────────────
+# SETUP
+# ─────────────────────────────────────────────────────────────────────────────────
 
-# Functions to ask yes/no and c/cpp questions
-ask_yes_no() {
-	local prompt="$1"
-	while true; do
-		read -p "$prompt (y/n) " answer || { echo -e "${RED}Failed to read input.${RESET}"; return 2; }
-		case "$answer" in
-			y|Y) return 0 ;;
-			n|N) return 1 ;;
-			*) echo -e "${YELLOW}Invalid input. Please enter 'y' or 'n'.${RESET}" ;;
-		esac
-	done
-}
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
-ask_c_cpp() {
-	local prompt="$1"
-	while true; do
-		read -p "$prompt (c/cpp) " answer || { echo -e "${RED}Failed to read input.${RESET}"; return 2; }
-		case "$answer" in
-			c|C) return 0 ;;
-			cpp|CPP|c++|C++) return 1 ;;
-			*) echo -e "${YELLOW}Invalid input. Please enter 'c' or 'cpp'.${RESET}" ;;
-		esac
-	done
-}
-
-# Check if required scripts exist
-SCRIPT_DIR="$HOME/.script/src"
-if [[ ! -f "$SCRIPT_DIR/cMakefile.sh" ]]; then
-	echo -e "${RED}Error: cMakefile.sh not found in $SCRIPT_DIR${RESET}"
-	exit 1
-fi
-if [[ ! -f "$SCRIPT_DIR/cppMakefile.sh" ]]; then
-	echo -e "${RED}Error: cppMakefile.sh not found in $SCRIPT_DIR${RESET}"
-	exit 1
-fi
-
-# Main script execution starts here
-if ask_yes_no "Do you need a Makefile"; then
-	if ask_c_cpp "C or C++?"; then
-		bash "$SCRIPT_DIR/cMakefile.sh" || { echo -e "${RED}Failed to create C Makefile.${RESET}"; exit 1; }
-		echo -e "${GREEN}C Makefile created successfully.${RESET}"
-	else
-		bash "$SCRIPT_DIR/cppMakefile.sh" || { echo -e "${RED}Failed to create C++ Makefile.${RESET}"; exit 1; }
-		echo -e "${GREEN}C++ Makefile created successfully.${RESET}"
-	fi
+# Source common library
+if [[ -f "$SCRIPT_DIR/common.sh" ]]; then
+    source "$SCRIPT_DIR/common.sh"
 else
-	echo -e "${BLUE}Does not require a Makefile.${RESET}"
+    echo "Error: common.sh not found" >&2
+    exit 1
 fi
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDATION
+# ─────────────────────────────────────────────────────────────────────────────────
+
+check_dependencies() {
+    local required=("cMakefile.sh" "cppMakefile.sh")
+    local missing=()
+    
+    for script in "${required[@]}"; do
+        [[ ! -f "$SCRIPT_DIR/$script" ]] && missing+=("$script")
+    done
+    
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Missing required scripts: ${missing[*]}"
+        exit 1
+    fi
+}
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+main() {
+    mini_banner "Compiler Setup" "$S_HAMMER"
+    
+    check_dependencies
+    
+    if ! ask_yes_no "Do you need a Makefile?" "y"; then
+        log_dim "Skipping Makefile creation"
+        return 0
+    fi
+    
+    echo ""
+    echo -e "  ${C_YELLOW}?${C_RESET} Select language:"
+    echo -e "    ${C_CYAN}1)${C_RESET} C"
+    echo -e "    ${C_CYAN}2)${C_RESET} C++"
+    echo ""
+    
+    local choice
+    while true; do
+        echo -ne "  ${C_CYAN}${S_ARROW}${C_RESET} Choice ${C_DIM}[1-2]${C_RESET}: ${C_BOLD}"
+        read -r choice || { echo -e "${C_RESET}"; return 1; }
+        echo -ne "${C_RESET}"
+        
+        case "$choice" in
+            1|c|C)
+                bash "$SCRIPT_DIR/cMakefile.sh" || { log_error "Failed to create C Makefile."; exit 1; }
+                log_success "C Makefile created"
+                return 0
+                ;;
+            2|cpp|CPP|c++|C++)
+                bash "$SCRIPT_DIR/cppMakefile.sh" || { log_error "Failed to create C++ Makefile."; exit 1; }
+                log_success "C++ Makefile created"
+                return 0
+                ;;
+            *)
+                log_warning "Please enter 1 (C) or 2 (C++)"
+                ;;
+        esac
+    done
+}
+
+main "$@"

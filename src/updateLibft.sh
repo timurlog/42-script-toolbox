@@ -1,64 +1,149 @@
 #!/bin/bash
+#
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                           42 LIBFT UPDATER                                   ║
+# ║                                                                              ║
+# ║  Push local libft changes back to your repository                            ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 set -euo pipefail
 
-# Color codes for quick status output
-YELLOW="\033[1;33m"
-RED="\033[0;91m"
-GREEN="\033[1;32m"
-BLUE="\033[0;94m"
-MAGENTA="\033[0;95m"
-RESET="\033[0m"
+# ─────────────────────────────────────────────────────────────────────────────────
+# SETUP
+# ─────────────────────────────────────────────────────────────────────────────────
 
-# Variables
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+# Source common library
+if [[ -f "$SCRIPT_DIR/common.sh" ]]; then
+    source "$SCRIPT_DIR/common.sh"
+else
+    echo "Error: common.sh not found" >&2
+    exit 1
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VARIABLES
+# ─────────────────────────────────────────────────────────────────────────────────
+
 REPO_URL="${LIBFT_REPO_URL:-}"
 PROJECT_DIR="$(pwd)"
+LIBFT_DIR="$PROJECT_DIR/libft"
+INCLUDE_DIR="$PROJECT_DIR/include"
 
-# Check if REPO_URL is set
-if [[ -z "$REPO_URL" ]]; then
-	echo -e "${RED}LIBFT_REPO_URL is not set. Please set it in your environment.${RESET}"
-	echo -e "${YELLOW}Example: export LIBFT_REPO_URL=\"git@github.com:user/libft.git\"${RESET}"
-	exit 1
-fi
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDATION
+# ─────────────────────────────────────────────────────────────────────────────────
 
-if [[ ! -f "$PROJECT_DIR/include/libft.h" || ! -d "$PROJECT_DIR/libft" ]]; then
-	echo -e "${RED}include/libft.h or the libft/ directory is not found in $(pwd).${RESET}"
-	exit 1
-fi
+validate_environment() {
+    # Check repo URL
+    if [[ -z "$REPO_URL" ]]; then
+        log_error "LIBFT_REPO_URL is not set"
+        log_dim "Set it in your environment:"
+        log_dim "export LIBFT_REPO_URL=\"git@github.com:user/libft.git\""
+        exit 1
+    fi
+    
+    # Check local files exist
+    local missing=()
+    
+    [[ ! -d "$LIBFT_DIR" ]] && missing+=("libft/")
+    [[ ! -f "$INCLUDE_DIR/libft.h" ]] && missing+=("include/libft.h")
+    
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Required files not found in $(pwd):"
+        for m in "${missing[@]}"; do
+            log_dim "${S_CROSS} $m"
+        done
+        exit 1
+    fi
+}
 
-CLONE_DIR="$(mktemp -d)" || { echo -e "${RED}Failed to create the temporary clone directory.${RESET}"; exit 1; }
+# ─────────────────────────────────────────────────────────────────────────────────
+# UPDATE PROCESS
+# ─────────────────────────────────────────────────────────────────────────────────
 
-trap 'rm -rf "$CLONE_DIR"' EXIT
+update_libft() {
+    mini_banner "Libft Update" "$S_ROCKET"
+    
+    validate_environment
+    
+    log_dim "Source: Local project"
+    log_dim "Target: $REPO_URL"
+    
+    # Create temp directory for clone
+    local clone_dir
+    clone_dir="$(mktemp -d)" || { log_error "Failed to create temp directory"; exit 1; }
+    trap "rm -rf '$clone_dir'" EXIT
+    
+    # Clone repository
+    log_info "Cloning libft repository..."
+    git clone --recursive "$REPO_URL" "$clone_dir" > /dev/null 2>&1 &
+    local pid=$!
+    spinner $pid "Downloading..."
+    wait $pid || { log_error "Failed to clone repository"; exit 1; }
+    
+    # Copy local files to clone
+    log_info "Copying local changes..."
+    
+    mkdir -p "$clone_dir/include"
+    mkdir -p "$clone_dir/libft"
+    
+    cp "$INCLUDE_DIR/libft.h" "$clone_dir/include/libft.h" || { log_error "Failed to copy libft.h"; exit 1; }
+    rm -rf "$clone_dir/libft"
+    cp -r "$LIBFT_DIR" "$clone_dir/libft" || { log_error "Failed to copy libft sources"; exit 1; }
+    
+    # Get commit message
+    echo ""
+    local commit_msg
+    read_input "Commit message" commit_msg "📝"
+    
+    # Stage and check for changes
+    pushd "$clone_dir" > /dev/null
+    
+    git add include/libft.h libft > /dev/null 2>&1 || { log_error "Failed to stage changes"; popd > /dev/null; exit 1; }
+    
+    if git diff --cached --quiet; then
+        log_warning "No changes detected"
+        log_dim "Your local libft matches the repository"
+        popd > /dev/null
+        return 0
+    fi
+    
+    # Show what changed
+    local files_changed
+    files_changed=$(git diff --cached --name-only | wc -l)
+    log_info "Files changed: ${C_CYAN}${files_changed}${C_RESET}"
+    
+    # Commit
+    log_info "Committing changes..."
+    git commit -m "$commit_msg" > /dev/null 2>&1 || { log_error "Failed to commit"; popd > /dev/null; exit 1; }
+    
+    local commit_hash
+    commit_hash=$(git rev-parse --short HEAD)
+    
+    # Push
+    log_info "Pushing to remote..."
+    git push > /dev/null 2>&1 &
+    pid=$!
+    spinner $pid "Uploading..."
+    wait $pid || { log_error "Failed to push. Please push manually."; popd > /dev/null; exit 1; }
+    
+    popd > /dev/null
+    
+    echo ""
+    divider_light
+    echo ""
+    log_success "Libft updated successfully!"
+    log_dim "Commit: $commit_hash - $commit_msg"
+}
 
-echo -e "${YELLOW}Cloning the libft repository...${RESET}"
-git clone --recursive "$REPO_URL" "$CLONE_DIR" > /dev/null 2>&1 || { echo -e "${RED}Failed to clone the repository.${RESET}"; exit 1; }
+# ─────────────────────────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────────────────────────
 
-echo -e "${BLUE}Copying local sources to the clone...${RESET}"
-mkdir -p "$CLONE_DIR/include" || { echo -e "${RED}Failed to create include directory in clone.${RESET}"; exit 1; }
-cp "$PROJECT_DIR/include/libft.h" "$CLONE_DIR/include/libft.h" || { echo -e "${RED}Failed to copy local libft.h.${RESET}"; exit 1; }
-rm -rf "$CLONE_DIR/libft"
-cp -r "$PROJECT_DIR/libft" "$CLONE_DIR/libft" || { echo -e "${RED}Failed to copy local libft sources.${RESET}"; exit 1; }
+main() {
+    update_libft
+}
 
-read -rp "Commit message to use: " COMMIT_MSG
-while [[ -z "${COMMIT_MSG// }" ]]; do
-	echo -e "${YELLOW}The message cannot be empty.${RESET}"
-	read -rp "Commit message to use: " COMMIT_MSG
-done
-
-pushd "$CLONE_DIR" >/dev/null
-
-git add include/libft.h libft > /dev/null 2>&1 || { echo -e "${RED}Failed to stage changes.${RESET}"; popd >/dev/null; exit 1; }
-
-if git diff --cached --quiet; then
-	echo -e "${YELLOW}No changes detected after copying; nothing to commit.${RESET}"
-	popd >/dev/null
-	exit 0
-fi
-
-git commit -m "$COMMIT_MSG" > /dev/null 2>&1 || { echo -e "${RED}Failed to commit changes.${RESET}"; popd >/dev/null; exit 1; }
-
-git push > /dev/null 2>&1 || { echo -e "${RED}Failed to push changes. Please push manually.${RESET}"; popd >/dev/null; exit 1; }
-
-popd >/dev/null
-
-echo -e "${GREEN}Successfully updated and pushed changes to the libft repository.${RESET}"
+main "$@"
