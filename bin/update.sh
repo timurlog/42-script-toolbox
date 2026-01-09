@@ -355,8 +355,6 @@ main() {
     verify_aliases
     verify_exports
     
-    cd "$original_dir" || true
-    
     show_completion_message
     
     # Just tell user to source their config
