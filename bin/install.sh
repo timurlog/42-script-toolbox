@@ -284,7 +284,7 @@ setup_aliases() {
         "bash ${INSTALL_DIR}/src/compiler.sh"
         "bash ${INSTALL_DIR}/src/gitignore.sh"
         "bash ${INSTALL_DIR}/src/updateLibft.sh"
-		"bash ${INSTALL_DIR}/bin/update.sh"
+		"bash -c \"\$(curl -fsSL https://raw.github.com/timurlog/42-script-toolbox/main/bin/update.sh)\""
 		"bash ${INSTALL_DIR}/src/help.sh"
 		"bash ${INSTALL_DIR}/src/version.sh"
     )
