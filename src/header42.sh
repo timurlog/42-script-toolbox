@@ -83,7 +83,7 @@ generate_42_header() {
 	
 	# Trim functions
 	local trimlogin="${user:0:9}"
-	local trimemail="${mail:0:$((contentlen - 13))}"
+	local trimemail="${mail:0:$((contentlen - 16))}"
 	
 	# Generate bigline
 	local fillcount=$((linelen - 2 - ${#start} - ${#end}))
