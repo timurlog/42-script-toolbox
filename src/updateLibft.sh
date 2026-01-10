@@ -89,25 +89,37 @@ update_libft() {
 
     pushd "$clone_dir" > /dev/null
 
-    # iterate files in include and libft from project
+    # 1) Handle include/libft.h only (no other .h)
+    if [[ -f "$INCLUDE_DIR/libft.h" ]]; then
+        src_header="$INCLUDE_DIR/libft.h"
+        basename_header="$(basename "$src_header")"
+        # find matches by basename in cloned repo
+        mapfile -d $'\0' -t matches < <(find "$clone_dir" -type f -name "$basename_header" -print0 2>/dev/null || true)
+        if [[ ${#matches[@]} -gt 0 ]]; then
+            # pick the shallowest match (shortest path)
+            best_match="$(printf "%s\n" "${matches[@]}" | awk '{ print length, $0 }' | sort -n | cut -d' ' -f2- | head -n1)"
+            copy_if_different "$src_header" "$best_match"
+        else
+            rel="${src_header#$PROJECT_DIR/}"
+            target="$clone_dir/$rel"
+            copy_if_different "$src_header" "$target"
+        fi
+    fi
+
+    # 2) Handle files in libft/ but exclude any .h files (only copy sources)
     while IFS= read -r -d '' src; do
         basename="$(basename "$src")"
-        # find matches by basename in cloned repo
-        IFS=$'\n' read -r -d '' -a matches < <(find "$clone_dir" -type f -name "$basename" -print0 2>/dev/null && printf '\0') || true
-
+        mapfile -d $'\0' -t matches < <(find "$clone_dir" -type f -name "$basename" -print0 2>/dev/null || true)
         if [[ ${#matches[@]} -gt 0 ]]; then
-            # choose the shallowest match (shortest path) as best candidate
             best_match="$(printf "%s\n" "${matches[@]}" | awk '{ print length, $0 }' | sort -n | cut -d' ' -f2- | head -n1)"
             copy_if_different "$src" "$best_match"
         else
-            # no match found: create the same relative path inside clone
             rel="${src#$PROJECT_DIR/}"
             target="$clone_dir/$rel"
             copy_if_different "$src" "$target"
         fi
-    done < <(find "$INCLUDE_DIR" "$LIBFT_DIR" -type f -print0 2>/dev/null)
+    done < <(find "$LIBFT_DIR" -type f ! -name '*.h' -print0 2>/dev/null)
 
-    # Stage also any new directories/files created by copying (already git-added)
     # Check for staged changes
     if git diff --cached --quiet; then
         log_warning "No changes detected"
