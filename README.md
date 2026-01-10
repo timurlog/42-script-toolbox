@@ -115,7 +115,9 @@ During installation, the script will prompt you for:
 - Your 42 email address
 - The link to your libft repository (GitHub, GitLab, etc.)
 
-Your libft repository must be structured as follows:
+Should work with any libft layout as long as there is a header file named libft.h, a Makefile that compiles the library into a libft.a file, and the .c source files.
+
+You can use the structure below as a reference to make sure it won't break:
 
 ```
 .
