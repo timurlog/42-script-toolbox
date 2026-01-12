@@ -185,7 +185,7 @@ all:		\$(NAME)
 
 \$(NAME):	\$(OBJ)
 			@\$(AR) \$(NAME) \$(OBJ)
-			@randlib \$(NAME)
+			@ranlib \$(NAME)
 			@echo "\$(GREEN)✓ $PROJECT_NAME.a compiled!\$(DEF_COLOR)"
 
 \$(OBJ_DIR)%.o: \$(SRC_DIR)%.c | \$(OBJF)
