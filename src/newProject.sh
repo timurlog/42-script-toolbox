@@ -148,6 +148,33 @@ setup_libft() {
     fi
 }
 
+setup_readme() {
+    log_step "README Setup"
+
+    if ask_yes_no "Create a README.md file?" "y"; then
+        cat << EOF > "$PROJECT_PATH/README.md"
+*This project has been created as part of the 42 curriculum by tilogie.*
+
+# $PROJECT_NAME
+
+## Description
+A brief overview of the project, its goal, and what it does.
+
+## Instructions
+How to compile, install, and/or run the project. Add any relevant commands or steps here.
+
+## Resources
+- Classic references (documentation, articles, tutorials, etc.)
+- Description of how AI was used: specify for which tasks and which parts of the project.
+
+<!-- Add additional sections as needed (usage examples, features, technical choices, etc.) -->
+EOF
+        log_success "Created ${C_CYAN}README.md${C_RESET}"
+    else
+        log_dim "Skipping README.md"
+    fi
+}
+
 initial_commit() {
     log_step "Initial Commit"
     
@@ -203,6 +230,7 @@ main() {
     init_repository
     setup_project_structure
     setup_libft
+    setup_readme
     initial_commit
     
     show_summary
