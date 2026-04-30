@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.1 - 2026-04-30
+
+### 🐛 Fixed
+- Replaced `echo` with `printf` in Makefile scripts to ensure consistent output formatting.
+
 ## v1.1.0 - 2025-01-09
 
 ### ✨ Added
