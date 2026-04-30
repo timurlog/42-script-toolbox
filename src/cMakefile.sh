@@ -100,10 +100,10 @@ all:		\$(PROG)
 \$(PROG):	\$(OBJ)
 			@make --no-print-directory -C \$(LIBFT)
 			@\$(CC) \$(OBJ) -L\$(LIBFT) -lft -o \$(PROG)
-			@echo -e "\$(GREEN)✓ $PROJECT_NAME compiled!\$(DEF_COLOR)"
+			@printf "\$(GREEN)✓ $PROJECT_NAME compiled!\$(DEF_COLOR)\n"
 
 \$(OBJ_DIR)%.o: \$(SRC_DIR)%.c | \$(OBJF)
-			@echo -e "\$(YELLOW)  Compiling: \$<\$(DEF_COLOR)"
+			@printf "\$(YELLOW)  Compiling: \$<\$(DEF_COLOR)\n"
 			@\$(CC) \$(CFLAGS) -c \$< -o \$@
 
 \$(OBJF):
@@ -114,19 +114,19 @@ clean:
 			@\$(RM) -rf \$(OBJ_DIR)
 			@\$(RM) -f \$(OBJF)
 			@make clean --no-print-directory -C \$(LIBFT)
-			@echo -e "\$(BLUE)✓ $PROJECT_NAME object files cleaned!\$(DEF_COLOR)"
+			@printf "\$(BLUE)✓ $PROJECT_NAME object files cleaned!\$(DEF_COLOR)\n"
 
 fclean:		clean
 			@\$(RM) -f \$(PROG)
 			@\$(RM) -f \$(LIBFT)/libft.a
-			@echo -e "\$(CYAN)✓ libft executables cleaned!\$(DEF_COLOR)"
-			@echo -e "\$(CYAN)✓ $PROJECT_NAME executables cleaned!\$(DEF_COLOR)"
+			@printf "\$(CYAN)✓ libft executables cleaned!\$(DEF_COLOR)\n"
+			@printf "\$(CYAN)✓ $PROJECT_NAME executables cleaned!\$(DEF_COLOR)\n"
 
 re:			fclean all
-			@echo -e "\$(GREEN)✓ $PROJECT_NAME recompiled!\$(DEF_COLOR)"
+			@printf "\$(GREEN)✓ $PROJECT_NAME recompiled!\$(DEF_COLOR)\n"
 
 norm:
-			@echo -e "\$(MAGENTA)Running norminette...\$(DEF_COLOR)"
+			@printf "\$(MAGENTA)Running norminette...\$(DEF_COLOR)\n"
 			@norminette \$(LIBFT) \$(INCLUDE) \$(SRC_DIR) 2>/dev/null | grep -v "OK!" || true
 
 .PHONY:		all clean fclean re norm
@@ -186,10 +186,10 @@ all:		\$(NAME)
 \$(NAME):	\$(OBJ)
 			@\$(AR) \$(NAME) \$(OBJ)
 			@ranlib \$(NAME)
-			@echo -e "\$(GREEN)✓ $PROJECT_NAME.a compiled!\$(DEF_COLOR)"
+			@printf "\$(GREEN)✓ $PROJECT_NAME.a compiled!\$(DEF_COLOR)\n"
 
 \$(OBJ_DIR)%.o: \$(SRC_DIR)%.c | \$(OBJF)
-			@echo -e "\$(YELLOW)  Compiling: \$<\$(DEF_COLOR)"
+			@printf "\$(YELLOW)  Compiling: \$<\$(DEF_COLOR)\n"
 			@\$(CC) \$(CFLAGS) -c \$< -o \$@
 
 \$(OBJF):
@@ -199,17 +199,17 @@ all:		\$(NAME)
 clean:
 			@\$(RM) -rf \$(OBJ_DIR)
 			@\$(RM) -f \$(OBJF)
-			@echo -e "\$(BLUE)✓ $PROJECT_NAME object files cleaned!\$(DEF_COLOR)"
+			@printf "\$(BLUE)✓ $PROJECT_NAME object files cleaned!\$(DEF_COLOR)\n"
 
 fclean:		clean
 			@\$(RM) -f \$(NAME)
-			@echo -e "\$(CYAN)✓ $PROJECT_NAME library files cleaned!\$(DEF_COLOR)"
+			@printf "\$(CYAN)✓ $PROJECT_NAME library files cleaned!\$(DEF_COLOR)\n"
 
 re:			fclean all
-			@echo -e "\$(GREEN)✓ $PROJECT_NAME.a recompiled!\$(DEF_COLOR)"
+			@printf "\$(GREEN)✓ $PROJECT_NAME.a recompiled!\$(DEF_COLOR)\n"
 
 norm:
-			@echo -e "\$(MAGENTA)Running norminette...\$(DEF_COLOR)"
+			@printf "\$(MAGENTA)Running norminette...\$(DEF_COLOR)\n"
 			@norminette \$(INCLUDE) \$(SRC_DIR) 2>/dev/null | grep -v "OK!" || true
 
 .PHONY:		all clean fclean re norm

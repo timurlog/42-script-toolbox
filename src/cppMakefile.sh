@@ -98,10 +98,10 @@ all:		\$(NAME)
 
 \$(NAME):	\$(OBJ)
 			@\$(CXX) \$(CXXFLAGS) \$(OBJ) -o \$(NAME)
-			@echo -e "\$(GREEN)✓ $PROJECT_NAME compiled!\$(DEF_COLOR)"
+			@printf "\$(GREEN)✓ $PROJECT_NAME compiled!\$(DEF_COLOR)\n"
 
 \$(OBJ_DIR)%.o: \$(SRC_DIR)%.cpp | \$(OBJF)
-			@echo -e "\$(YELLOW)  Compiling: \$<\$(DEF_COLOR)"
+			@printf "\$(YELLOW)  Compiling: \$<\$(DEF_COLOR)\n"
 			@\$(CXX) \$(CXXFLAGS) -c \$< -o \$@
 
 \$(OBJF):
@@ -111,14 +111,14 @@ all:		\$(NAME)
 clean:
 			@\$(RM) -rf \$(OBJ_DIR)
 			@\$(RM) -f \$(OBJF)
-			@echo -e "\$(BLUE)✓ $PROJECT_NAME object files cleaned!\$(DEF_COLOR)"
+			@printf "\$(BLUE)✓ $PROJECT_NAME object files cleaned!\$(DEF_COLOR)\n"
 
 fclean:		clean
 			@\$(RM) -f \$(NAME)
-			@echo -e "\$(CYAN)✓ $PROJECT_NAME executable cleaned!\$(DEF_COLOR)"
+			@printf "\$(CYAN)✓ $PROJECT_NAME executable cleaned!\$(DEF_COLOR)\n"
 
 re:			fclean all
-			@echo -e "\$(GREEN)✓ $PROJECT_NAME recompiled!\$(DEF_COLOR)"
+			@printf "\$(GREEN)✓ $PROJECT_NAME recompiled!\$(DEF_COLOR)\n"
 
 .PHONY:		all clean fclean re
 MAKEFILE_EOF
